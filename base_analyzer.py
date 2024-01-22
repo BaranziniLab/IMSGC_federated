@@ -4,6 +4,9 @@ from pathlib import Path
 import os
 import statsmodels.formula.api as smf
 import logging
+import sys
+
+
 
 parser = argparse.ArgumentParser(prog='Federates Genomic Analysis',
                                  description= 'Run a Simple Linear Regression on the target metric controlling for covariates',
@@ -12,6 +15,7 @@ parser = argparse.ArgumentParser(prog='Federates Genomic Analysis',
 
 parser.add_argument("-p", "--path",type=str, required=True, dest='path')
 parser.add_argument("-t", "--target", type=str, nargs='+', required=True, dest='target')
+parser.add_argument('-id', '--id', type=str, required=False)
 parser.add_argument("-c", "--covariates", type=str, nargs='+', required=True, dest='covariates')
 parser.add_argument("-ft", '--file-type', choices=['csv', 'tsv', 'sas', 'spss'], default='csv')
 parser.add_argument('-out', '--out', type=str, required=True)
@@ -22,8 +26,13 @@ file_dir = Path(args.path)
 targets = args.target
 covariates = args.covariates
 file_type = args.file_type
-
+id = args.id
 out_dir = args.out
+
+
+sys.stdout = open(out_dir + '/logfile', 'w')
+sys.stderr = open(out_dir + '/logfile_error', 'w')
+
 
 if not file_dir.exists():
     print("The file for analysis doesn't exist, or there is a typo")
@@ -31,13 +40,15 @@ if not file_dir.exists():
 
 
 try:
-    print('... loading file at: ' + args.path)
+    print('... loading file from: ' + args.path)
     df = pd.read_table(file_dir, delimiter=_delimiter[file_type])
 except:
     print('Error reading file from Pandas. Check that the format of the file is correct')
     raise SystemExit(1)
 
-final_columns = covariates + targets
+final_columns = covariates + targets 
+if id != None:
+    final_columns = list(id) + final_columns
 
 try:
    df_analysis = df[final_columns]
@@ -48,11 +59,21 @@ except KeyError:
     print(final_columns)
     raise SystemExit(1)
 
+if id != None:
+    amount_of_duplicated = len(df_analysis.loc[df_analysis[id].duplicated()])
+
+    if amount_of_duplicated > 0:
+        print('!! ALARM : THERE ARE DUPLICATED IDS !! ')
+
+    amount_of_duplicated.drop_duplicates(subset=id)
+
+
 try:
     os.mkdir(out_dir)
 except FileExistsError:
     print('Folder results already created')
     pass
+
 
 for target_var in targets:
 
