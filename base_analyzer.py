@@ -32,7 +32,7 @@ out_dir = args.out
 
 sys.stdout = open(out_dir + '/logfile', 'w')
 sys.stderr = open(out_dir + '/logfile_error', 'w')
-
+sys.stdin = sys.stdout
 
 if not file_dir.exists():
     print("The file for analysis doesn't exist, or there is a typo")
@@ -59,6 +59,7 @@ except KeyError:
     print(final_columns)
     raise SystemExit(1)
 
+
 if id != None:
     amount_of_duplicated = len(df_analysis.loc[df_analysis[id].duplicated()])
 
@@ -67,6 +68,14 @@ if id != None:
 
     amount_of_duplicated.drop_duplicates(subset=id)
 
+n_rows = len(df_analysis)
+
+print('The data frame contains {n} rows'.format(n = n_rows))
+
+n_rows_na = n_rows - len(df_analysis.dropna())
+if n_rows_na > 0:
+    print('The dataframe contains {n} NaN rows '.format(n = n_rows_na))
+    df_analysis.dropna(inplace=True)
 
 try:
     os.mkdir(out_dir)
