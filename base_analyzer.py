@@ -71,7 +71,5 @@ for target_var in targets:
     metadata_name = "/metadata_{target}.tsv".format(target=target_var)
     results_name = "/results_{target}.tsv".format(target=target_var)
 
-    results.to_csv(out_dir + metadata_name, index=False, sep='\t')
-    metadata.to_csv(out_dir + results_name, index=False, sep='\t')
-
-
+    results.to_csv(out_dir + results_name, index=False, sep='\t')
+    metadata.to_csv(out_dir + metadata_name, index=False, sep='\t')
