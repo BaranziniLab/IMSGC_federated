@@ -67,10 +67,6 @@ except KeyError:
     print(final_columns)
     raise SystemExit(1)
 
-if n_rows_na > 0:
-    print('The dataframe contains {n} NaN rows '.format(n = n_rows_na))
-    df_analysis.dropna(inplace=True)
-
 try:
     os.mkdir(out_dir)
 except FileExistsError:
@@ -81,9 +77,9 @@ df_analysis = df_analysis.melt(id_vars=covariates)
 df_analysis.dropna(inplace=True)
 
 
-for time, var in zip(time, covariates):
+for time, var in zip(times, covariates):
 
     df_analysis.loc[df_analysis['variable'] ==  var, 'time'] = time
 
 results_name = "/long_transformed_{target}.tsv".format(target=target_string)
-results.to_csv(out_dir + results_name,  sep='\t')
+df_analysis.to_csv(out_dir + results_name,  sep='\t')
