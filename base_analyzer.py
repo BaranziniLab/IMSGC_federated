@@ -30,8 +30,8 @@ id = args.id
 out_dir = args.out
 
 
-sys.stdout = open(out_dir + '/logfile', 'w')
-sys.stderr = open(out_dir + '/logfile_error', 'w')
+sys.stdout = open(out_dir + '/logfile_base.log', 'w')
+sys.stderr = sys.stdout
 sys.stdin = sys.stdout
 
 if not file_dir.exists():
