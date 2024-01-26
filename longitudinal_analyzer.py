@@ -32,8 +32,8 @@ id = args.id
 out_dir = args.out
 
 
-sys.stdout = open(out_dir + '/logfile', 'w')
-sys.stderr = open(out_dir + '/logfile_error', 'w')
+sys.stdout = open(out_dir + '/logfile_longitudinal.log', 'w')
+sys.stderr = sys.stdout
 sys.stdin = sys.stdout
 
 id_string = id[0]
