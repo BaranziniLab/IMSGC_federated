@@ -81,5 +81,5 @@ for time, tar in zip(times, targets):
 
     df_analysis.loc[df_analysis['variable'] ==  tar, 'time'] = time
     
-results_name = "/long_transformed_{target}.tsv".format(target=target_string)
+results_name = "/long_transformed_{target}.csv".format(target=target_string)
 df_analysis.to_csv(out_dir + results_name, index=False)
