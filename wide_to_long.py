@@ -17,7 +17,7 @@ parser.add_argument("-p", "--path",type=str, required=True, dest='path')
 parser.add_argument("-t", "--target", type=str,  nargs='+', required=True, dest='target')
 parser.add_argument('-id', '--id', type=str,nargs='+', required=True)
 parser.add_argument("-c", "--covariates", type=str, nargs='+', required=True, dest='covariates')
-parser.add_argument("-t", "--time", type=str,  nargs='+', required=True, dest='target')
+parser.add_argument("-time", "--time", type=str,  nargs='+', required=True, dest='time')
 parser.add_argument("-ft", '--file-type', choices=['csv', 'tsv', 'sas', 'spss'], default='csv')
 parser.add_argument('-out', '--out', type=str, required=True)
 parser.add_argument('-filter', '--filter-var', type=str, required=False, dest='filter_var')
@@ -28,12 +28,18 @@ args = parser.parse_args()
 
 _delimiter = {'tsv':'/t', 'csv':',', }
 file_dir = Path(args.path)
-target = args.target
+targets = args.target
 covariates = args.covariates
 times = args.time 
 file_type = args.file_type
 id = args.id
 out_dir = args.out
+
+try:
+    os.mkdir(out_dir)
+except FileExistsError:
+    print('Folder results already created')
+    pass
 
 
 sys.stdout = open(out_dir + '/wide_to_long_logger.log', 'w')
@@ -41,7 +47,7 @@ sys.stderr = sys.stdout
 sys.stdin = sys.stdout
 
 id_string = id[0]
-target_string = target[0]
+target_string = targets[0]
 
 
 if not file_dir.exists():
@@ -55,7 +61,7 @@ except:
     print('Error reading file from Pandas. Check that the format of the file is correct')
     raise SystemExit(1)
 
-final_columns = covariates + target 
+final_columns = covariates + targets + id 
 
 
 try:
@@ -67,19 +73,13 @@ except KeyError:
     print(final_columns)
     raise SystemExit(1)
 
-try:
-    os.mkdir(out_dir)
-except FileExistsError:
-    print('Folder results already created')
-    pass
-
-df_analysis = df_analysis.melt(id_vars=covariates)
+df_analysis = df_analysis.melt(id_vars=covariates + id)
 df_analysis.dropna(inplace=True)
 
 
-for time, var in zip(times, covariates):
+for time, tar in zip(times, targets):
 
-    df_analysis.loc[df_analysis['variable'] ==  var, 'time'] = time
-
+    df_analysis.loc[df_analysis['variable'] ==  tar, 'time'] = time
+    
 results_name = "/long_transformed_{target}.tsv".format(target=target_string)
-df_analysis.to_csv(out_dir + results_name,  sep='\t')
+df_analysis.to_csv(out_dir + results_name,  sep='\t', index=False)
