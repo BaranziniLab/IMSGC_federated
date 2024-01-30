@@ -36,7 +36,7 @@ id = args.id
 out_dir = args.out
 
 
-sys.stdout = open(out_dir + '/logfile_longitudinal.log', 'w')
+sys.stdout = open(out_dir + '/wide_to_long_logger.log', 'w')
 sys.stderr = sys.stdout
 sys.stdin = sys.stdout
 
