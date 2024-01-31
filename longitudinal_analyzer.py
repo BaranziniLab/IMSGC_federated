@@ -99,8 +99,8 @@ mod = smf.mixedlm(formula_maker, data=df_analysis, groups=id_string, re_formula=
 metadata = mod.summary().tables[0]
 results = mod.summary().tables[1].reset_index()
 
-metadata_name = "/llm_metadata_{target}.tsv".format(target=target_string)
-results_name = "/llm_results_{target}.tsv".format(target=target_string)
+metadata_name = "/lmm_metadata_{target}.tsv".format(target=target_string)
+results_name = "/lmm_results_{target}.tsv".format(target=target_string)
 
 results.to_csv(out_dir + results_name,  sep='\t')
 metadata.to_csv(out_dir + metadata_name, sep='\t')
