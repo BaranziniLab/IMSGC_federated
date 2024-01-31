@@ -30,6 +30,12 @@ id = args.id
 out_dir = args.out
 
 
+try:
+    os.mkdir(out_dir)
+except FileExistsError:
+    print('Folder results already created')
+    pass
+
 sys.stdout = open(out_dir + '/logfile_base.log', 'w')
 sys.stderr = sys.stdout
 sys.stdin = sys.stdout
@@ -76,12 +82,6 @@ n_rows_na = n_rows - len(df_analysis.dropna())
 if n_rows_na > 0:
     print('The dataframe contains {n} NaN rows '.format(n = n_rows_na))
     df_analysis.dropna(inplace=True)
-
-try:
-    os.mkdir(out_dir)
-except FileExistsError:
-    print('Folder results already created')
-    pass
 
 
 for target_var in targets:
